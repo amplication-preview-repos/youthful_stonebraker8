@@ -1,0 +1,118 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Bid {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  amount     Float?
+  message    String?
+  freelancer String?
+  job        Job?     @relation(fields: [jobId], references: [id])
+  jobId      String?
+}
+
+model Job {
+  id          String    @id @default(cuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  title       String?
+  description String?
+  deadline    DateTime?
+  budget      Float?
+  client      String?
+  bids        Bid[]
+  payments    Payment[]
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  message   String?
+  read      Boolean?
+}
+
+model Message {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  timestamp DateTime?
+  content   String?
+  sender    String?
+  receiver  String?
+}
+
+model Dashboard {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Payment {
+  id         String             @id @default(cuid())
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @updatedAt
+  amount     Float?
+  status     EnumPaymentStatus?
+  freelancer String?
+  job        Job?               @relation(fields: [jobId], references: [id])
+  jobId      String?
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  comment   String?
+  rating    Int?
+  reviewer  String?
+  reviewee  String?
+}
+
+model Profile {
+  id             String              @id @default(cuid())
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  bio            String?
+  skills         EnumProfileSkills[]
+  portfolioLinks Json?
+}
+
+model User {
+  id             String           @id @default(cuid())
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  firstName      String?
+  lastName       String?
+  username       String           @unique
+  email          String?          @unique
+  password       String
+  roles          Json
+  portfolioLinks Json?
+  bio            String?
+  skills         EnumUserSkills[]
+  role           EnumUserRole?
+}
+
+enum EnumPaymentStatus {
+  Option1
+}
+
+enum EnumProfileSkills {
+  Option1
+}
+
+enum EnumUserSkills {
+  Option1
+}
+
+enum EnumUserRole {
+  Option1
+}
